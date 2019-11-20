@@ -1,3 +1,4 @@
+ 
 /*
 	ServeurChalet
 	
@@ -7,14 +8,19 @@
 		-- Les redirigers au Controleur Chalet
 		-- Répondre aux demandes du client
 		-- Creer un thread pour le client
-
-
 */
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.PrintWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 
 
-public class Runnable ServeurChalet{
+public class ServeurChalet{
 	
 	public static final int PORT = 1942;
 	
@@ -24,11 +30,13 @@ public class Runnable ServeurChalet{
 	private BufferedReader reader;
 	private PrintWriter writer;
 	
+	private String MotDePasse = "CoolGui1!";
+	
 	// Boolean représentant si l'a connexion a écris le bon mot de passe
 	private boolean Verifier = false;
 	
 	
-	private String[5] CommandesPossibles = new String() {"LOGIN","LOGOUT","TEMP","HUM","LUM","TMIN","TMAX","LMIN","FIN"};
+	private String[] CommandesPossibles = {"LOGIN","LOGOUT","TEMP","HUM","LUM","TMIN","TMAX","LMIN","FIN"};
 	
 	
 	
@@ -63,7 +71,7 @@ public class Runnable ServeurChalet{
 	/// --- Servire ---
 	/// Attent une reponse ecrite du client
 	///
-	private void Servir()
+	private void Servir() throws IOException
 	{
 		boolean fini = false;
 		String ligne = null;
@@ -72,7 +80,7 @@ public class Runnable ServeurChalet{
 		{
 			ligne = reader.readLine();
 			
-			if(ligne != null || !ligne.equals("")
+			if(ligne != null || !ligne.equals(""))
 					// Si la ligne n'est pas vide ou null	
 						// On envois la ligne a une methode qui s'occupera de la gestion des donners recus
 							// retournera false si la connexion est terminer
@@ -96,8 +104,8 @@ public class Runnable ServeurChalet{
 	private boolean Traiter_Donners(String[] commandes)
 	{
 		boolean Valide = false;
-		String Message;
-		foreach(String A : CommandesPossibles)
+		String Message = "";
+		for(String A : CommandesPossibles)
 		{
 			if(Valide == false)
 				Valide = A.equals(commandes[0].toUpperCase());
@@ -115,7 +123,7 @@ public class Runnable ServeurChalet{
 			{
 				return false;
 			}
-			else if(commandes.length() != 2)
+			else if(commandes.length != 2)
 			{
 				Message = "NAK";
 				
@@ -137,18 +145,23 @@ public class Runnable ServeurChalet{
 			
 			break;
 			case "HUM":
+			
 			break;
 			case "LUM":
+			
 			break;
 			case "TMIN":
+			
 			break;
 			case "TMAX":
+			
 			break;
 			case "LMIN":
+			
 			break;
-			case "FIN"
+			case "FIN":
 			return false;
-			break;
+			
 			default:
 			
 			
@@ -162,8 +175,9 @@ public class Runnable ServeurChalet{
 		
 		writer.write(Message);
 		writer.flush();
+		return false;
 		
-	}
+}
 	
 	/// --- Verifier Mot de Passe ---
 	/// commandes: String -> Mot de Passe reçu
@@ -179,7 +193,7 @@ public class Runnable ServeurChalet{
 		}
 		else{
 			Verifier = true;
-			return "ACK"
+			return "ACK";
 
 		}
 		
@@ -189,8 +203,6 @@ public class Runnable ServeurChalet{
 	/// --- get Temperature ---
 	/// Retourne -> string Contenant la Temperature du Chalet
 	private String getTemperature(){
-		
-		
-		
+		return "Ta mere";	
 	}
 }
