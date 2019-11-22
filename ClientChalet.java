@@ -8,14 +8,24 @@
 
 
 */
-
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.PrintWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 
 public class  ClientChalet implements Runnable{
 
 
     private BufferedReader bufferedReader;
     private PrintWriter printer;
-    private Controlechalet ctChalet;
+    private ControleChalet ctChalet;
+    private boolean Verifier = false;
+    private String MotDePasse = "ABC123";
 
     public ClientChalet(BufferedReader bufferReader,PrintWriter printer,ControleChalet ctChalet){
 
@@ -27,21 +37,31 @@ public class  ClientChalet implements Runnable{
 
 
 
-    private String[] CommandesPossibles = {"LOGIN","LOGOUT","TEMP","HUM","LUM","TMIN","TMAX","LMIN","FIN"};
+    private String[] CommandesPossibles = {"LOGIN","LOGOUT","TEMP","HUM","LUM","TMARGE","LMIN","FIN"};
 
     /// --- Servire ---
 	/// Attent une reponse ecrite du client
 	///
-	private void run()
+	public void run() 
 	{
+		
 		boolean fini = false;
 		String ligne = null;
 
 		while(!fini)
 		{
-			ligne = reader.readLine();
-
-			if(ligne != null || !ligne.equals("")
+			try{
+				
+			ligne = bufferedReader.readLine();
+			}
+			catch(IOException e)
+			{
+				fini = true;
+				System.out.println("Read Failed");
+			}
+				
+				
+			if(ligne != null || !ligne.equals(""))
 					// Si la ligne n'est pas vide ou null
 						// On envois la ligne a une methode qui s'occupera de la gestion des donners recus
 							// retournera false si la connexion est terminer
@@ -55,8 +75,9 @@ public class  ClientChalet implements Runnable{
 
 		}
 
+}
 
-	}
+	
 
 	/// --- Traiter_Donners ---
 	/// commandes: String[] -> Les commandes et ses parametres
@@ -65,11 +86,11 @@ public class  ClientChalet implements Runnable{
 	private boolean Traiter_Donners(String[] commandes)
 	{
 		boolean Valide = false;
-		boolean Continuer = true;
-		String Message;
+		boolean fini = false;
+		String Message = "NAK";
 
 
-		foreach(String A : CommandesPossibles) /// Je m'assure que le premier paramètre de la commande
+		for(String A : CommandesPossibles) /// Je m'assure que le premier paramètre de la commande
 												// est t'un commande possible
 		{
 			if(Valide == false)
@@ -77,49 +98,51 @@ public class  ClientChalet implements Runnable{
 
 		}
 
-		if(Valide && Verifier){
+		if(Valide && !Verifier){
 
-			if(commandes[0].toUpperCase() != "LOGIN" && commandes[0].toUpperCase() != "FIN")
+			if(!commandes[0].toUpperCase().equals( "LOGIN") && !commandes[0].toUpperCase().equals("FIN"))
 			{
 				Message = "NAK NOT LOGGED IN";
 
 			}
-			else if(commandes[0].toUpperCase() == "FIN")
+			else if(commandes[0].toUpperCase().equals("FIN"))
 			{
-				Continuer =  false;
+				fini =  true;;
+				Message = "AKN";
 			}
-			else if(commandes.length() != 2)
+			else if(commandes.length == 2)
 			{
-				Message = "NAK";
-
-			}
-			else{
-				VerifierPassword(commandes[1]);
+				
+				Message = VerifierPassword(commandes[1]);
+				
 			}
 
 
 		}
-		else if(Valide && !Verifier){
+		else if(Valide && Verifier){
 
 			switch(commandes[0].toUpperCase()){
 			case "LOGOUT":
-
+			    Verifier = false;
 			break;
 			case "TEMP":
 			Message = getTemperature();
 			break;
 			case "HUM":
+			Message = getHumidite();
 			break;
 			case "LUM":
+			Message = getLuminosite();
 			break;
-			case "TMIN":
-			break;
-			case "TMAX":
+			case "TMARGE":
+			Message = setMargeTemp(commandes[1],commandes[2]);
 			break;
 			case "LMIN":
+			Message = setLum(commandes[1]);
 			break;
-			case "FIN"
-			Continuer = false;
+			case "FIN":
+			fini = true;
+			Message= "Goodbye";
 
 			default:
 
@@ -132,9 +155,9 @@ public class  ClientChalet implements Runnable{
 
 		}
 
-		writer.write(Message);
-		writer.flush();
-		return Continuer; // Retoure Temporaire
+		printer.write(Message + "\n");
+		printer.flush();
+		return fini; // Retoure Temporaire
 
 	}
 
@@ -152,7 +175,7 @@ public class  ClientChalet implements Runnable{
 		}
 		else{
 			Verifier = true;
-			return "ACK"
+			return "ACK Accès Accepté";
 
 		}
 
@@ -161,15 +184,15 @@ public class  ClientChalet implements Runnable{
 
 	/// --- get Temperature ---
     	/// Retourne -> string Contenant la Temperature du Chalet
-	private String getTemperature() => ctChalet.get_Temp();
+	private String getTemperature() {return ctChalet.get_Temp();}
 
     /// --- get Humiditer ---
     	/// Retourne -> string Contenant l'humiditer du Chalet
-	private String getHumidite() => ctChalet.get_Hum();
+	private String getHumidite() {return ctChalet.get_Hum();}
 
     /// --- get Luminositer ---
     	/// Retourne -> string Contenant la luminositer du Chalet
-    private String getLuminosite() => ctChalet.get_Lum();
+    private String getLuminosite() {return ctChalet.get_Lum();}
 
     /// --- set MargeTemp ---
         /// Min: String -> La temperature Minimum
@@ -190,7 +213,13 @@ public class  ClientChalet implements Runnable{
 
      /// --- set MargeTemp ---
             /// Lum: String -> La luminositer Min avant d'allumer les lumières
-    private String setLum(String Lum) => ctChalet.setLum(Lum) ? "ACK" : "NAK";
+    private String setLum(String Lum){
+    
+    if(ctChalet.setLum(Lum))
+    return "ACK";
+    else
+     return "NAK";
+     }
 
 
 

@@ -37,7 +37,7 @@ public class ServeurChalet{
 			*/
 		Chalet chalet = new Chalet(maxTemp,minTemp,eclairage); // Crée le Chalet
 
-		ControleChalet controleChalet = new ControleChalet(Chalet);
+		ControleChalet controleChalet = new ControleChalet(chalet);
 
 		ClientChalet Client;
 

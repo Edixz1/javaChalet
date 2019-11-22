@@ -11,7 +11,7 @@ class ControleChalet
 {
 
 
-	public Chalet chalet
+	public Chalet chalet;
 
 	public ControleChalet(Chalet chalet ) {
 		this.chalet = chalet;
@@ -77,14 +77,39 @@ class ControleChalet
 
 
 
-	public String get_Temp() => ( "Temp : "+chalet.getTemperatureHumidite(1)+" *C");
-	public String get_Hum() => ("Hum : "+chalet.getTemperatureHumidite(0)+" %");
-	public String get_Lum() => ("Lum : "+chalet.getLuminosite()+" lx");
+	public String get_Temp() {
+		
+		try{
+		return "Temp : "+chalet.getTemperatureHumidite(1)+" *C";}
+		
+		catch(Exception e)
+		{
+			return "Temp: Exception Was Thrown ";
+		}					
+							}
+								
+								
+	public String get_Hum()   {
+		try{
+		return "Hum : "+chalet.getTemperatureHumidite(0)+" %";
+		}
+		catch(Exception e){
+		return "Hum : Exception was Thrown";
+		}
+	}
+	public String get_Lum()   {
+		try{
+		return "Lum : "+chalet.getLuminosite()+" lx";
+	}
+		catch(Exception e){
+		return "Lum : Exception was Thrown";
+		}
+	}
 
 
 
 	public boolean setMarge(String Min, String Max){
-			if(tryParseInt(Min) && tryParseInt(Max) && (Min < Max))
+			if(tryParseInt(Min) && tryParseInt(Max) && (Integer.parseInt(Min)< Integer.parseInt(Max)))
 			{
 				return chalet.setMargeTemp((double)Integer.parseInt(Min),(double)Integer.parseInt(Max));
 			}
@@ -98,10 +123,10 @@ class ControleChalet
 
 		if(tryParseInt(Lum))
 		{
-		return chalet.setLuminosité((double)Interger.parseInt(Lum));
+		return chalet.setLuminosité(Integer.parseInt(Lum));
 		}
 
-		return false
+		return false;
 	}
 
 

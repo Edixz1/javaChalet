@@ -6,7 +6,7 @@ import org.iot.raspberry.grovepi.devices.GroveTemperatureAndHumiditySensor;
 import java.io.IOException;
 import java.lang.*;
 
-class Chalet implements Runnable
+class Chalet  
 {
 	
 	private Object Mutex = new Object();
@@ -118,4 +118,4 @@ class Chalet implements Runnable
 	public double getLuminosite() throws IOException {return CapteurLumiere.get();}
 	
 	
-
+}
