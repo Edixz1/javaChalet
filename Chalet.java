@@ -6,12 +6,13 @@ import org.iot.raspberry.grovepi.devices.GroveTemperatureAndHumiditySensor;
 import java.io.IOException;
 import java.lang.*;
 
-class Chalet 
+class Chalet  
 {
 	
 	private Object Mutex = new Object();
 	private GroveTemperatureAndHumiditySensor Dt;
 	private GroveLightSensor CapteurLumiere;
+	
 	
 	private GroveLed DelR;
 	private GroveLed DelB;
@@ -60,6 +61,7 @@ class Chalet
 		{System.err.println("Probleme de capteur(Temperature,Humidity,Lumiere)");}
 	}
 	
+
 	public void Chauffage(boolean on) throws IOException { DelR.set(on);}
 	
 	public void Climatisation(boolean on)  throws IOException {DelB.set(on);}
@@ -116,59 +118,4 @@ class Chalet
 	public double getLuminosite() throws IOException {return CapteurLumiere.get();}
 	
 	
-	public void Update(){
-		
-		double temp;
-		double hum;
-		double lum;
-		try
-		{
-			
-				
-				temp = this.getTemperatureHumidite(1);
-			
-				hum = this.getTemperatureHumidite(2);
-				lum  = this.getLuminosite();
-				
-				//Clim
-				if(temp > this.getTempMax())
-				{
-					this.Climatisation(true);
-					//System.out.println("Clim on");
-				}
-				else
-				{
-					this.Climatisation(false);
-					//System.out.println("Clim off");
-				}
-				//Chauffage
-				if(temp < this.getTempMin())
-				{
-					this.Chauffage(true);
-					//System.out.println("Chauf on");
-				}
-				else
-				{
-					this.Chauffage(false);
-					//System.out.println("Chauf off");
-				}
-				//Lumiere
-				if(lum < this.getLumMin())
-				{
-					this.Éclairage(true);	
-					//System.out.println("Lum on");
-				}
-				else
-				{
-					this.Éclairage(false);
-					//System.out.println("Lum off");
-				}
-			
-		}
-		catch(IOException x){}
-		catch(InterruptedException xxx){}
-		
-	}
 }
-
-
