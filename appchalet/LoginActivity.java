@@ -12,12 +12,16 @@ public class Login extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_login);
+
     }
     public void Clause(View v)
     {
-        Intent main = new Intent(Login.this, Login.class);
+
+        Intent intent = new Intent(this, MainActivity.class);
+        MainActivity.NotLoggedIn = false;
+        startActivity(intent);
         finishActivity(0);
-        startActivity(main);
+
     }
 }
