@@ -10,19 +10,32 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
+
+    static boolean NotLoggedIn = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_login);
+        if(NotLoggedIn) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            NotLoggedIn = false;
+        }
+        else
+        {
+            setContentView(R.layout.activity_main);
+        }
 
     }
 
     public void TostTemps(View v)
     {
         Toast rotie = Toast.makeText(MainActivity.this,  // contexte
-                "Tester Toast", // message
-                Toast.LENGTH_LONG);          // durée
+                " Toast TEMP PeanutButter", // message
+                Toast.LENGTH_SHORT);          // durée
         rotie.show();
     }
 }
+
+
